@@ -1,26 +1,197 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Site */
+  --background: #f1eada; /* site background */
+  --foreground: #590106; /* ana metin */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Extra theme tokens */
+  --ink: #590106; /* ana yazı */
+  --ink-soft: #3d1f12; /* ikincil yazı */
+  --footer: #590106; /* en alttaki bar */
+  --footer-ink: #f1eada; /* footer yazısı */
+
+  /* Brand (opsiyonel, mevcut sisteminle uyumlu) */
+  --brand-ivory: 241 234 218; /* F1EADA */
+  --brand-gold: 150 126 74;
+  --brand-gold-dark: 120 98 56;
+  --brand-ink: 89 1 6; /* 590106 */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f1eada;
+    --foreground: #590106;
+    --ink: #590106;
+    --ink-soft: #3d1f12;
+    --footer: #590106;
+    --footer-ink: #f1eada;
   }
+}
+
+@media (min-width: 768px) {
+  main p {
+    font-size: 17px;
+  }
+}
+
+/* Main içindeki tüm paragraflar otomatik vakko-body + responsive font-size */
+main p {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 400;
+  color: var(--ink-soft);
+  line-height: 1.9;
+  font-size: 15px;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink-soft);
+  font-family:
+    var(--font-sans),
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+}
+
+.footer-bar {
+  background: var(--footer);
+  color: var(--footer-ink);
+}
+
+/* Vakko-style headings (serif), body stays sans */
+.vakko-title {
+  font-family: var(--font-serif), serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.vakko-subtitle {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.vakko-body {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 400;
+  color: var(--ink-soft);
+  line-height: 1.9;
+}
+
+.vakko-nav {
+  font-family: var(--font-serif), serif;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.vakko-overline {
+  font-family: var(--font-serif), serif;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Vakko-like double line (top + bottom) */
+.vakko-double-line::before,
+.vakko-double-line::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: var(--line, #8a7b4a);
+  opacity: 0.9;
+  box-shadow: 0 0 0 0.5px var(--line, #8a7b4a);
+}
+
+.vakko-double-line::before {
+  top: 0;
+}
+
+.vakko-double-line::after {
+  bottom: 0;
+}
+
+.vakko-double-line-strong {
+  border: 0 !important;
+  outline: 0 !important;
+}
+/* Vakko-like strong double line (full width) */
+.vakko-double-line-strong::before,
+.vakko-double-line-strong::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line, #8a7b4a);
+  opacity: 1;
+}
+
+.vakko-double-line-strong::before {
+  top: 0;
+}
+
+.vakko-double-line-strong::after {
+  bottom: 0;
+}
+
+.vakko-circle-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 42px;
+  width: 42px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  display: grid;
+  place-items: center;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.vakko-circle-arrow:hover {
+  opacity: 0.9;
+}
+.vakko-circle-arrow.left-3 {
+  left: 12px;
+}
+.vakko-circle-arrow.right-3 {
+  right: 12px;
+}
+
+/* Premium image glare effect */
+.img-glare {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+.img-glare::before {
+  content: '';
+  position: absolute;
+  left: -60%;
+  top: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.02) 100%);
+  transform: skewX(-20deg) scale(1.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 1.1s cubic-bezier(0.7, 0.14, 0.22, 0.95);
+}
+.img-glare:hover::before {
+  left: 100%;
+  opacity: 1;
+}
+
+html,
+body {
+  overflow-x: hidden;
 }

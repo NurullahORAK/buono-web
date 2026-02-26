@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+## Environment Variables
+No environment variables are required for the current mock-data version.
+(Sanity integration will introduce `.env` variables.)
