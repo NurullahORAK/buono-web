@@ -15,7 +15,7 @@ export default function GiftBoxesPage() {
             Henüz ürün eklenmemiş. (Sanity bağlanınca burada görünecek.)
           </p>
         ) : (
-          <CategoryProductsClient products={products} />
+          <CategoryProductsClient products={products} categorySlug="hediye-paketleri" />
         )}
       </div>
     </div>

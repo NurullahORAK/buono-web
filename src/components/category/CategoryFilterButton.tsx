@@ -3,20 +3,30 @@
 import { useState } from 'react';
 import FilterButton from '@/components/common/FilterButton';
 import CategoryFilterPanel, { DEFAULT_FILTERS, type CategoryFilters } from './CategoryFilterPanel';
+import { categoryFilters } from '@/content/categoryFilters';
 
-export default function CategoryFilterButton() {
+export default function CategoryFilterButton({
+  categorySlug,
+  onApplyFilters,
+}: {
+  categorySlug: string;
+  onApplyFilters: (filters: CategoryFilters) => void;
+}) {
   const [filters, setFilters] = useState<CategoryFilters>(DEFAULT_FILTERS);
+
+  const availableTags = categoryFilters[categorySlug] ?? [];
 
   return (
     <FilterButton
-      onReset={() => setFilters(DEFAULT_FILTERS)}
+      onReset={() => {
+        setFilters(DEFAULT_FILTERS);
+        onApplyFilters(DEFAULT_FILTERS);
+      }}
       onApply={() => {
-        // Sprint 1: şimdilik sadece state hazır.
-        // Sprint 2: burada URL searchParams ile listeyi gerçekten filtreleyeceğiz.
-        console.log('Apply filters:', filters);
+        onApplyFilters(filters);
       }}
     >
-      <CategoryFilterPanel value={filters} onChange={setFilters} />
+      <CategoryFilterPanel value={filters} onChange={setFilters} availableTags={availableTags} />
     </FilterButton>
   );
 }

@@ -10,6 +10,13 @@ const TAGS: Record<string, string[]> = {
 
 const giftProducts: Product[] = [
   {
+    id: '',
+    name: '',
+    slug: '',
+    categorySlug: 'cikolata',
+    tags: ['Nişan söz', 'Bonbon'], // ✅ burası
+  },
+  {
     id: 'g1',
     name: 'Hediye Kutusu 1',
     slug: 'hediye-kutusu-1',

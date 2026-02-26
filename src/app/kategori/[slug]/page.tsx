@@ -100,7 +100,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         </section>
       ) : (
-        <CategoryProductsClient products={products} />
+        <CategoryProductsClient products={products} categorySlug={slug} />
       )}
     </div>
   );

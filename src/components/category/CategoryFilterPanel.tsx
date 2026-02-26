@@ -62,6 +62,7 @@ export default function CategoryFilterPanel({
           ) : (
             availableTags.map((t) => {
               const checked = value.tags.includes(t);
+
               return (
                 <label
                   key={t}
@@ -72,8 +73,10 @@ export default function CategoryFilterPanel({
                     type="checkbox"
                     checked={checked}
                     onChange={() => {
-                      const next = checked ? value.tags.filter((x) => x !== t) : [...value.tags, t];
-                      onChange({ ...value, tags: next });
+                      const nextTags = checked
+                        ? value.tags.filter((x) => x !== t)
+                        : [...value.tags, t];
+                      onChange({ ...value, tags: nextTags });
                     }}
                   />
                   <span className="text-sm text-black/80">{t}</span>
