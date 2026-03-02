@@ -1,19 +1,33 @@
 'use client';
 
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 
 export default function OrganizationImageCarousel({ images }: { images: string[] }) {
-  const imgs = useMemo(() => (images?.length ? images : ['1']), [images]);
+  const imgs = useMemo(() => (images?.length ? images : []), [images]);
   const [i, setI] = useState(0);
 
   const can = imgs.length > 1;
   const prev = () => can && setI((v) => (v - 1 + imgs.length) % imgs.length);
   const next = () => can && setI((v) => (v + 1) % imgs.length);
 
+  const current = imgs[i];
+
   return (
     <div className="relative h-[340px] md:h-[420px] rounded-2xl bg-black/5 overflow-hidden border border-black/10">
-      {/* placeholder görsel */}
-      <div className="absolute inset-0 bg-black/5" />
+      {/* ✅ Görsel */}
+      {current ? (
+        <Image
+          src={current}
+          alt="Organizasyon görseli"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 520px"
+          priority
+        />
+      ) : (
+        <div className="absolute inset-0 bg-black/5" />
+      )}
 
       {can ? (
         <>

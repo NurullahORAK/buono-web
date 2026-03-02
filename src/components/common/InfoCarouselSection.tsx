@@ -12,11 +12,15 @@ export default function InfoCarouselSection({
   kicker?: string;
   section: CMSSection;
 }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' });
-  const [index, setIndex] = useState(0);
-
   const slides = useMemo<CMSImage[]>(() => section.images ?? [], [section.images]);
-  const total = slides.length || 1;
+  const total = slides.length;
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    loop: true,
+  });
+
+  const [index, setIndex] = useState(0);
 
   const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -26,10 +30,14 @@ export default function InfoCarouselSection({
     const onSelect = () => setIndex(emblaApi.selectedScrollSnap());
     onSelect();
     emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
     return () => {
       emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
     };
   }, [emblaApi]);
+
+  const renderSlides = total > 0 ? slides : [{ src: '', alt: '' }];
 
   return (
     <section className="rounded-2xl border border-black/10 bg-[color:var(--background)] p-6 md:p-10">
@@ -41,7 +49,7 @@ export default function InfoCarouselSection({
         <div className="relative">
           <div ref={emblaRef} className="overflow-hidden rounded-2xl bg-black/5">
             <div className="flex">
-              {(slides.length ? slides : [{ src: '', alt: '' }]).map((img: CMSImage, i: number) => (
+              {renderSlides.map((img: CMSImage, i: number) => (
                 <div key={i} className="flex-[0_0_100%]">
                   <div className="relative aspect-[4/3] w-full">
                     {img.src ? (
@@ -64,26 +72,26 @@ export default function InfoCarouselSection({
             </div>
           </div>
 
-          <button
-            onClick={prev}
-            aria-label="Önceki"
-            className="vakko-circle-arrow left-3"
-            type="button"
-          >
-            ‹
-          </button>
-          <button
-            onClick={next}
-            aria-label="Sonraki"
-            className="vakko-circle-arrow right-3"
-            type="button"
-          >
-            ›
-          </button>
-
-          <div className="mt-3 text-center vakko-body text-[12px] tracking-[0.18em] text-black/50">
-            {total > 1 ? `${index + 1}/${total}` : null}
-          </div>
+          {total > 1 ? (
+            <>
+              <button
+                onClick={prev}
+                aria-label="Önceki"
+                className="vakko-circle-arrow left-3"
+                type="button"
+              >
+                ‹
+              </button>
+              <button
+                onClick={next}
+                aria-label="Sonraki"
+                className="vakko-circle-arrow right-3"
+                type="button"
+              >
+                ›
+              </button>
+            </>
+          ) : null}
         </div>
 
         <div className="min-w-0">

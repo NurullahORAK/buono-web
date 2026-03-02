@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body>
         <SiteHeader />
-        <main className={features.orderLineBar ? 'pb-24' : undefined}>{children}</main>
+        <main className={features.orderLineBar ? 'pb-8' : undefined}>{children}</main>
         {features.orderLineBar ? <OrderLineBar /> : null}
         <SiteFooter />
         <BackToTopButton />

@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getReferenceBySlug } from '@/content';
 import OrganizationImageCarousel from '@/components/organization/OrganizationImageCarousel';
+import { fetchReferenceBySlug } from '@/sanity/data/consulting';
 
 export default async function ReferenceDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const item = getReferenceBySlug(slug);
+  const item = await fetchReferenceBySlug(slug);
   if (!item) return notFound();
 
   return (
@@ -41,7 +41,7 @@ export default async function ReferenceDetail({ params }: { params: Promise<{ sl
       <h1 className="mt-6 vakko-title text-3xl md:text-4xl">{item.title.toUpperCase()}</h1>
 
       <div className="mt-6">
-        <OrganizationImageCarousel images={item.images} />
+        <OrganizationImageCarousel images={item.images ?? []} />
       </div>
 
       <div className="mt-8">

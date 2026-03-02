@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { config } from '@/lib/config';
-import { getOrganizationTypeBySlug } from '@/content';
 import OrganizationImageCarousel from '@/components/organization/OrganizationImageCarousel';
+import { fetchOrganizationTypeBySlug } from '@/sanity/data/organization';
 
 export default async function OrganizationDetailPage({
   params,
@@ -11,11 +11,13 @@ export default async function OrganizationDetailPage({
 }) {
   const { slug } = await params;
 
-  const item = getOrganizationTypeBySlug(slug);
+  const item = await fetchOrganizationTypeBySlug(slug);
   if (!item) return notFound();
 
   const msg = `Merhaba, ${config.brandName} için "${item.title}" organizasyonu hakkında bilgi almak istiyorum.`;
-  const wa = `https://wa.me/${config.whatsappPhoneE164.replace('+', '')}?text=${encodeURIComponent(msg)}`;
+  const wa = `https://wa.me/${config.whatsappPhoneE164.replace('+', '')}?text=${encodeURIComponent(
+    msg
+  )}`;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -41,10 +43,8 @@ export default async function OrganizationDetailPage({
       </nav>
 
       <section className="mt-6 grid gap-6 rounded-2xl border border-black/10 p-6 lg:grid-cols-2">
-        {/* Sol: slider */}
         <OrganizationImageCarousel images={item.images} />
 
-        {/* Sağ: bilgi */}
         <div className="flex flex-col justify-center">
           <h1 className="vakko-title text-3xl md:text-4xl">{item.title.toUpperCase()}</h1>
 

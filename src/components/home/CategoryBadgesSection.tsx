@@ -1,11 +1,6 @@
 import Link from 'next/link';
 import { config } from '@/lib/config';
-
-const categoryHref = (slug: string) => {
-  if (slug === 'hediye-paketleri') return '/hediye-paketleri';
-  if (slug === 'pasta') return '/pasta';
-  return `/kategori/${slug}`;
-};
+import { categoryHref } from '@/lib/routes';
 
 export default function CategoryBadgesSection() {
   return (

@@ -1,59 +1,110 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import Image from 'next/image';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { HeroSlide } from '@/content/types';
 
 export default function OrganizationHeroCarousel({ slides }: { slides: HeroSlide[] }) {
-  const safeSlides = useMemo(
-    () => (slides?.length ? slides : [{ id: 's0', title: 'Görsel' }]),
-    [slides]
-  );
-  const [i, setI] = useState(0);
+  const items = useMemo(() => (slides ?? []).filter((s) => !!s.image), [slides]);
+  const total = items.length;
 
-  const can = safeSlides.length > 1;
-  const prev = () => can && setI((v) => (v - 1 + safeSlides.length) % safeSlides.length);
-  const next = () => can && setI((v) => (v + 1) % safeSlides.length);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    loop: true, // ✅ döngü
+  });
+
+  const [index, setIndex] = useState(0);
+
+  const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setIndex(emblaApi.selectedScrollSnap());
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi]);
+
+  if (total === 0) {
+    return (
+      <div className="h-[280px] md:h-[360px] rounded-2xl bg-black/5 border border-black/10 grid place-items-center text-black/50">
+        Hero slider (placeholder)
+      </div>
+    );
+  }
 
   return (
-    <div className="relative h-[260px] md:h-[320px] rounded-2xl bg-black/5 overflow-hidden border border-black/10">
-      {/* slide */}
-      <div className="h-full w-full bg-black/5" />
-      {/* arrows */}
-      {can ? (
+    <div className="relative">
+      <div ref={emblaRef} className="overflow-hidden rounded-2xl bg-black/5 border border-black/10">
+        <div className="flex">
+          {items.map((s, i) => (
+            <div key={s.id ?? i} className="flex-[0_0_100%]">
+              <div className="relative h-[280px] md:h-[360px]">
+                <Image
+                  src={s.image as string}
+                  alt={s.title ?? 'Organizasyon'}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 960px"
+                  priority={i === 0}
+                />
+                {/* title varsa overlay */}
+                {s.title ? (
+                  <div className="absolute left-4 bottom-4 bg-white/80 backdrop-blur px-4 py-3 rounded-xl">
+                    <div className="text-[11px] uppercase tracking-[0.18em] text-black/60">
+                      Organizasyon
+                    </div>
+                    <div className="mt-1 font-semibold">{s.title}</div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* oklar */}
+      {total > 1 ? (
         <>
           <button
-            type="button"
             onClick={prev}
             aria-label="Önceki"
-            className="absolute left-2 top-1/2 -translate-y-1/2 grid h-9 w-9 place-items-center bg-transparent text-[color:var(--gold)] transition hover:opacity-70"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M14 6l-6 6 6 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-          <button
+            className="vakko-circle-arrow left-3"
             type="button"
+          >
+            ‹
+          </button>
+          <button
             onClick={next}
             aria-label="Sonraki"
-            className="absolute right-3 top-1/2 -translate-y-1/2 grid h-10 w-10 place-items-center bg-transparent text-[color:var(--gold)] transition hover:opacity-70"
+            className="vakko-circle-arrow right-3"
+            type="button"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M10 6l6 6-6 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            ›
           </button>
+
+          {/* dot */}
+          <div className="mt-3 flex items-center justify-center gap-2">
+            {items.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Slide ${i + 1}`}
+                onClick={() => scrollTo(i)}
+                className={[
+                  'h-2 w-2 rounded-full transition',
+                  i === index ? 'bg-[color:var(--gold)]' : 'bg-black/20 hover:bg-black/35',
+                ].join(' ')}
+              />
+            ))}
+          </div>
         </>
       ) : null}
     </div>

@@ -9,21 +9,32 @@ import { DEFAULT_FILTERS, type CategoryFilters } from '@/components/category/Cat
 export default function CategoryProductsClient({
   products,
   categorySlug,
+  filterTags = [],
 }: {
   products: Product[];
   categorySlug: string;
+  filterTags?: string[];
 }) {
   const [applied, setApplied] = useState<CategoryFilters>(DEFAULT_FILTERS);
 
+  const derivedTags = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => (p.tags ?? []).forEach((t) => set.add(t)));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));
+  }, [products]);
+
+  // ✅ Önce kategoriye tanımlı filtreler; yoksa ürünlerden türet
+  const availableTags = filterTags.length > 0 ? filterTags : derivedTags;
+
   const filteredAndSorted = useMemo(() => {
-    // 1) Filter (tags)
     let list = products;
 
+    // Filter (tags)
     if (applied.tags.length > 0) {
       list = list.filter((p) => (p.tags ?? []).some((t) => applied.tags.includes(t)));
     }
 
-    // 2) Sort
+    // Sort
     if (applied.sort === 'az') {
       list = [...list].sort((a, b) => a.name.localeCompare(b.name, 'tr'));
     } else if (applied.sort === 'za') {
@@ -39,7 +50,11 @@ export default function CategoryProductsClient({
         <h2 className="text-xl font-semibold">Ürünler</h2>
 
         <div className="flex items-center gap-3">
-          <CategoryFilterButton categorySlug={categorySlug} onApplyFilters={setApplied} />
+          <CategoryFilterButton
+            categorySlug={categorySlug}
+            availableTags={availableTags}
+            onApplyFilters={setApplied}
+          />
         </div>
       </div>
 

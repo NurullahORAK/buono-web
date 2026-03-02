@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 type Slide = { src?: string; alt?: string };
 
@@ -13,15 +13,21 @@ export default function ProductImageCarousel({
   images?: Slide[];
   fallbackCount?: number;
 }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' });
+  const slides = useMemo(() => {
+    return images && images.length > 0
+      ? images
+      : Array.from({ length: fallbackCount }).map(() => ({}) as Slide);
+  }, [images, fallbackCount]);
+
+  const totalReal = images?.length ?? 0;
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    loop: true,
+  });
 
   const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
-
-  const slides =
-    images && images.length > 0
-      ? images
-      : Array.from({ length: fallbackCount }).map(() => ({}) as Slide);
 
   return (
     <div className="relative">
@@ -50,20 +56,26 @@ export default function ProductImageCarousel({
         </div>
       </div>
 
-      <button
-        onClick={prev}
-        aria-label="Önceki görsel"
-        className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/80 hover:bg-white transition grid place-items-center z-10"
-      >
-        ‹
-      </button>
-      <button
-        onClick={next}
-        aria-label="Sonraki görsel"
-        className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/80 hover:bg-white transition grid place-items-center z-10"
-      >
-        ›
-      </button>
+      {totalReal > 1 ? (
+        <>
+          <button
+            onClick={prev}
+            aria-label="Önceki görsel"
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/80 hover:bg-white transition grid place-items-center z-10"
+            type="button"
+          >
+            ‹
+          </button>
+          <button
+            onClick={next}
+            aria-label="Sonraki görsel"
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/80 hover:bg-white transition grid place-items-center z-10"
+            type="button"
+          >
+            ›
+          </button>
+        </>
+      ) : null}
     </div>
   );
 }

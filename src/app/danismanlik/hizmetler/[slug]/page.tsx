@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { config } from '@/lib/config';
-import { getConsultingServiceBySlug } from '@/content';
 import OrganizationImageCarousel from '@/components/organization/OrganizationImageCarousel';
+import { fetchConsultingServiceBySlug } from '@/sanity/data/consulting';
 
 export default async function ConsultingServiceDetail({
   params,
@@ -11,11 +11,13 @@ export default async function ConsultingServiceDetail({
 }) {
   const { slug } = await params;
 
-  const item = getConsultingServiceBySlug(slug);
+  const item = await fetchConsultingServiceBySlug(slug);
   if (!item) return notFound();
 
   const msg = `Merhaba, ${config.brandName} için "${item.title}" hizmeti hakkında bilgi almak istiyorum.`;
-  const wa = `https://wa.me/${config.whatsappPhoneE164.replace('+', '')}?text=${encodeURIComponent(msg)}`;
+  const wa = `https://wa.me/${config.whatsappPhoneE164.replace('+', '')}?text=${encodeURIComponent(
+    msg
+  )}`;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -46,24 +48,26 @@ export default async function ConsultingServiceDetail({
         </ol>
       </nav>
 
-      {/* Tek kolon: referans sayfası gibi */}
+      {/* ✅ ESKİ TASARIM: tek kolon */}
       <section className="mt-6 rounded-2xl border border-black/10 p-6">
-        {/* TAM GENİŞ SLIDER */}
+        {/* ✅ TAM GENİŞ SLIDER */}
         <div className="rounded-2xl overflow-hidden bg-black/5">
-          <OrganizationImageCarousel images={item.images} />
+          <OrganizationImageCarousel images={item.images ?? []} />
         </div>
 
-        {/* ALTTA YAZILAR */}
+        {/* ✅ ALTTA YAZILAR */}
         <div className="mt-10 max-w-3xl">
           <h1 className="vakko-title text-3xl md:text-4xl">{item.title}</h1>
-          <p className="mt-4 text-black/70 leading-relaxed">{item.short}</p>
+
+          {item.short ? <p className="mt-4 text-black/70 leading-relaxed">{item.short}</p> : null}
 
           <div className="mt-10 border-t border-black/10 pt-8">
             <div className="text-[11px] uppercase tracking-[0.18em] text-black/50">
               HİZMET DETAYI
             </div>
+
             <p className="mt-3 text-black/70 leading-relaxed">
-              {item.body ?? 'Detay metni (placeholder). Sanity bağlanınca şef dolduracak.'}
+              {item.body || 'Detay metni yakında eklenecek.'}
             </p>
 
             <a

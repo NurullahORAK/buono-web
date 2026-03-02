@@ -130,9 +130,9 @@ export default function SiteFooter() {
             © {new Date().getFullYear()} {config.brandName}
           </div>
 
-          <div className="vakko-overline text-[color:var(--footer-ink)]/75">
+          <Link href="/fikri-sinai-mulkiyet" className="hover:opacity-70 transition">
             TÜM HAKLARI SAKLIDIR.
-          </div>
+          </Link>
         </div>
       </div>
     </footer>

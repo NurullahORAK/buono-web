@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback } from 'react';
 import type { Product } from '@/content/types';
@@ -8,10 +7,8 @@ import ProductCard from './ProductCard';
 
 export default function ProductCarousel({ products }: { products: Product[] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true, // ✅ gerçek döngü
+    loop: true,
     align: 'start',
-    // ✅ her tıkta “görünen kadar” kayması için
-    // (3 görünüyorsa 3, 2 görünüyorsa 2, mobilde 1)
     slidesToScroll: 1,
     breakpoints: {
       '(min-width: 640px)': { slidesToScroll: 2 },
@@ -19,8 +16,20 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
     },
   });
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  // ✅ GARANTİ wrap: sona geldiyse başa sar, baştaysa sona sar
+  const scrollPrev = useCallback(() => {
+    if (!emblaApi) return;
+    if (emblaApi.canScrollPrev()) emblaApi.scrollPrev();
+    else emblaApi.scrollTo(emblaApi.scrollSnapList().length - 1);
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (!emblaApi) return;
+    if (emblaApi.canScrollNext()) emblaApi.scrollNext();
+    else emblaApi.scrollTo(0);
+  }, [emblaApi]);
+
+  if (!products || products.length === 0) return null;
 
   return (
     <div className="mt-4">
@@ -29,6 +38,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
           onClick={scrollPrev}
           aria-label="Önceki"
           className="h-9 w-9 rounded-full hover:bg-black/5 transition grid place-items-center"
+          type="button"
         >
           ‹
         </button>
@@ -36,6 +46,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
           onClick={scrollNext}
           aria-label="Sonraki"
           className="h-9 w-9 rounded-full hover:bg-black/5 transition grid place-items-center"
+          type="button"
         >
           ›
         </button>

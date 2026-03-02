@@ -7,7 +7,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { config } from '@/lib/config';
 import { features } from '@/lib/features';
 import { useStickyState } from '@/hooks/useStickyState';
-import MobileMenuDrawer from './MobileMenuDrawer';
+import dynamic from 'next/dynamic';
+import { categoryHref } from '@/lib/routes';
+
+const MobileMenuDrawer = dynamic(() => import('./MobileMenuDrawer'), { ssr: false });
 
 export default function SiteHeader() {
   const pathname = usePathname();
@@ -20,12 +23,6 @@ export default function SiteHeader() {
   const pinned = stuck || searchOpen;
 
   const GOLD = config.theme?.gold ?? '#8A7B4A';
-
-  const categoryHref = (slug: string) => {
-    if (slug === 'hediye-paketleri') return '/hediye-paketleri';
-    if (slug === 'pasta') return '/pasta';
-    return `/kategori/${slug}`;
-  };
 
   // navbar yüksekliğini ölç (arama panelini navbarın ALTINDAN açacağız)
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -225,8 +222,8 @@ function SearchPanel({
   }, [onClose]);
 
   return (
-    <div className="bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
-      <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="bg-[color:var(--background)] border-b border-black/10 shadow-[0_14px_40px_rgba(0,0,0,0.08)]">
+      <div className="mx-auto max-w-6xl px-4 py-10">
         <form
           className="mx-auto max-w-3xl"
           onSubmit={(e) => {
@@ -237,20 +234,26 @@ function SearchPanel({
             onSubmit(q);
           }}
         >
-          <input
-            ref={inputRef}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="Ara…"
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            className="w-full bg-transparent text-sm tracking-[0.14em] outline-none border-b pb-3"
-            style={{ borderColor: gold, color: gold }}
-          />
+          <div className="flex items-center gap-3">
+            <span className="text-black/40 text-xs tracking-[0.22em] uppercase select-none">
+              Ara
+            </span>
 
-          {/* Tahmin/öneri yok (bilerek kaldırıldı) */}
+            <input
+              ref={inputRef}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Ürün, kategori…"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              className="w-full bg-transparent text-[15px] md:text-[16px] tracking-[0.12em]
+                       text-black/80 placeholder:text-black/35
+                       outline-none border-b pb-3"
+              style={{ borderColor: gold }}
+            />
+          </div>
         </form>
       </div>
     </div>

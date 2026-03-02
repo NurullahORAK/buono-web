@@ -3,12 +3,7 @@
 import Link from 'next/link';
 import Drawer from '@/components/common/Drawer';
 import { config } from '@/lib/config';
-
-const categoryHref = (slug: string) => {
-  if (slug === 'hediye-paketleri') return '/hediye-paketleri';
-  if (slug === 'pasta') return '/pasta';
-  return `/kategori/${slug}`;
-};
+import { categoryHref } from '@/lib/routes';
 
 export default function MobileMenuDrawer({
   open,
@@ -36,7 +31,9 @@ export default function MobileMenuDrawer({
                 key={c.slug}
                 href={categoryHref(c.slug)}
                 onClick={() => onClose()}
-                className="rounded-xl border border-black/10 px-4 py-3 hover:border-black/25 transition"
+                className="rounded-2xl border border-black/10 px-4 py-3
+           bg-white/40 hover:bg-white/70
+           hover:border-black/25 transition"
               >
                 {c.label}
               </Link>
@@ -51,7 +48,9 @@ export default function MobileMenuDrawer({
             <Link
               href="/uretim-merkezi"
               onClick={() => onClose()}
-              className="rounded-xl border border-black/10 px-4 py-3 hover:border-black/25 transition"
+              className="rounded-2xl border border-black/10 px-4 py-3
+           bg-white/40 hover:bg-white/70
+           hover:border-black/25 transition"
             >
               Üretim Merkezi
             </Link>
@@ -59,7 +58,9 @@ export default function MobileMenuDrawer({
             <Link
               href="/kalite-ve-gida-guvenligi"
               onClick={() => onClose()}
-              className="rounded-xl border border-black/10 px-4 py-3 hover:border-black/25 transition"
+              className="rounded-2xl border border-black/10 px-4 py-3
+           bg-white/40 hover:bg-white/70
+           hover:border-black/25 transition"
             >
               Kalite ve Gıda Güvenliği
             </Link>
@@ -67,7 +68,9 @@ export default function MobileMenuDrawer({
             <Link
               href="/sss"
               onClick={() => onClose()}
-              className="rounded-xl border border-black/10 px-4 py-3 hover:border-black/25 transition"
+              className="rounded-2xl border border-black/10 px-4 py-3
+           bg-white/40 hover:bg-white/70
+           hover:border-black/25 transition"
             >
               SSS
             </Link>
@@ -75,7 +78,9 @@ export default function MobileMenuDrawer({
             <Link
               href="/iletisim"
               onClick={() => onClose()}
-              className="rounded-xl border border-black/10 px-4 py-3 hover:border-black/25 transition"
+              className="rounded-2xl border border-black/10 px-4 py-3
+           bg-white/40 hover:bg-white/70
+           hover:border-black/25 transition"
             >
               İletişim
             </Link>
@@ -83,7 +88,9 @@ export default function MobileMenuDrawer({
             <Link
               href="/fikri-sinai-mulkiyet"
               onClick={() => onClose()}
-              className="rounded-xl border border-black/10 px-4 py-3 hover:border-black/25 transition"
+              className="rounded-2xl border border-black/10 px-4 py-3
+           bg-white/40 hover:bg-white/70
+           hover:border-black/25 transition"
             >
               Fikri Sınai Mülkiyet
             </Link>
