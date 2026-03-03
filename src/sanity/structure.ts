@@ -1,8 +1,18 @@
+// src/sanity/structure.ts
 import type { StructureResolver } from 'sanity/structure';
 
-const singletonTypes = new Set(['siteSettings', 'organizationPage', 'consultingPage', 'homePage']);
+const singletonTypes = new Set([
+  'siteSettings',
+  'organizationPage',
+  'consultingPage',
+  'homePage',
+  'contactPage',
+  'faqPage',
+  'qualityPage',
+  'productionCenterPage',
+]);
 
-// Manuel eklediğin document type list item’lar (auto list tekrar eklemesin)
+// Auto list tekrar eklemesin
 const pinnedTypes = new Set([
   'category',
   'product',
@@ -10,6 +20,7 @@ const pinnedTypes = new Set([
   'organizationType',
   'consultingService',
   'referenceItem',
+  'contentPage', // contentPage'yi auto listten saklıyoruz (çünkü menüye özel item koyuyoruz)
 ]);
 
 export const structure: StructureResolver = (S) =>
@@ -23,6 +34,21 @@ export const structure: StructureResolver = (S) =>
         .child(S.document().schemaType('siteSettings').documentId('siteSettings')),
 
       S.listItem()
+        .title('Ana Sayfa')
+        .id('homePage')
+        .child(S.document().schemaType('homePage').documentId('homePage')),
+
+      S.listItem()
+        .title('İletişim Sayfası')
+        .id('contactPage')
+        .child(S.document().schemaType('contactPage').documentId('contactPage')),
+
+      S.listItem()
+        .title('SSS Sayfası')
+        .id('faqPage')
+        .child(S.document().schemaType('faqPage').documentId('faqPage')),
+
+      S.listItem()
         .title('Organizasyon Sayfası')
         .id('organizationPage')
         .child(S.document().schemaType('organizationPage').documentId('organizationPage')),
@@ -33,13 +59,26 @@ export const structure: StructureResolver = (S) =>
         .child(S.document().schemaType('consultingPage').documentId('consultingPage')),
 
       S.listItem()
-        .title('Ana Sayfa')
-        .id('homePage')
-        .child(S.document().schemaType('homePage').documentId('homePage')),
+        .title('Kalite ve Gıda Güvenliği')
+        .id('qualityPage')
+        .child(S.document().schemaType('qualityPage').documentId('qualityPage')),
+
+      S.listItem()
+        .title('Üretim Merkezi')
+        .id('productionCenterPage')
+        .child(
+          S.document().schemaType('productionCenterPage').documentId('productionCenterPage')
+        ),
+
+      // ✅ Kurumsal Sayfalar yerine tek sayfa:
+      S.listItem()
+        .title('Fikri Sınai Mülkiyet')
+        .id('fikriSinaiMulkiyet')
+        .child(S.document().schemaType('contentPage').documentId('fikriSinaiMulkiyet')),
 
       S.divider(),
 
-      // ---- Collections (manuel)
+      // ---- Collections
       S.documentTypeListItem('category').title('Categories'),
       S.documentTypeListItem('product').title('Products'),
       S.documentTypeListItem('cakeGroup').title('Pasta Grupları'),
