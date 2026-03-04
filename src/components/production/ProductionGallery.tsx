@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import type { ProductionGalleryItem } from '@/content/types';
 
@@ -29,14 +30,16 @@ function ProductionCard({ item }: { item: ProductionGalleryItem }) {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Sol: Görsel alanı */}
         <div className="relative">
-          <div className="aspect-[16/10] w-full overflow-hidden rounded-2xl bg-black/5 grid place-items-center text-black/50">
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-black/5 grid place-items-center text-black/50">
             {current?.src ? (
-              // src varsa göster, yoksa placeholder
-              // (boş string vermiyoruz -> uyarı çıkmaz)
-              <img
+              <Image
                 src={current.src}
                 alt={current.alt || item.title}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                // Sanity/uzak görsellerde bazen ilk render'da sorun yaşarsan aç:
+                // unoptimized
               />
             ) : (
               <div className="text-center">

@@ -5,18 +5,20 @@ import FilterButton from '@/components/common/FilterButton';
 import CategoryFilterPanel, { DEFAULT_FILTERS, type CategoryFilters } from './CategoryFilterPanel';
 
 export default function CategoryFilterButton({
-  categorySlug,
+  categorySlug: _categorySlug,
   availableTags = [],
   onApplyFilters,
 }: {
-  categorySlug?: string; // şimdilik opsiyonel kalsın (ileride analytics vs. için kullanabilirsin)
+  categorySlug?: string; // şimdilik opsiyonel kalsın
   availableTags?: string[];
   onApplyFilters?: (filters: CategoryFilters) => void;
 }) {
-  // Eğer yanlışlıkla props verilmeden kullanılırsa (ProductActions gibi), UI hiç çıkmasın:
-  if (!onApplyFilters) return null;
-
+  void _categorySlug;
+  // Hook her durumda çalışmalı
   const [filters, setFilters] = useState<CategoryFilters>(DEFAULT_FILTERS);
+
+  // Eğer props verilmeden kullanılırsa UI hiç çıkmasın
+  if (!onApplyFilters) return null;
 
   return (
     <FilterButton

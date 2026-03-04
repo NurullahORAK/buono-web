@@ -2,7 +2,7 @@ import { config } from '@/lib/config';
 
 export default function OrderLineBar() {
   return (
-    <section className="mt-16 bg-[color:var(--background)]">
+    <section className="mt-1 bg-[color:var(--background)]">
       <div className="mx-auto max-w-6xl px-4">
         <div className="h-px w-full bg-black/10" />
 
@@ -21,7 +21,7 @@ export default function OrderLineBar() {
             </div>
 
             <div className="mt-2 text-sm text-[color:var(--ink-soft)]">
-              {config.orderLine?.hours ?? 'Haftanın her günü / 10:00 – 22:00'}
+              {config.orderLine?.hours ?? 'Haftanın her günü / 08:00 – 24:00'}
             </div>
 
             <div className="mt-4 text-xs text-[color:var(--ink-soft)]">

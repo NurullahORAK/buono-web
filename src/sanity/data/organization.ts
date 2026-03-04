@@ -15,6 +15,15 @@ const orgPageQuery = groq`
 }
 `;
 
+type OrgTypeRow = {
+  _id: string;
+  title: string;
+  slug: string;
+  short?: string | null;
+  body?: unknown;
+  images?: Array<string | null>;
+};
+
 const orgTypesQuery = groq`
 *[_type=="organizationType" && active==true]
 | order(order asc, _createdAt desc) {
@@ -38,8 +47,15 @@ const orgTypeBySlugQuery = groq`
 }
 `;
 
+function toTextBody(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+function toImages(v: Array<string | null> | undefined): string[] {
+  return (v ?? []).filter((x): x is string => Boolean(x));
+}
+
 export async function fetchOrganizationTypeBySlug(slug: string): Promise<OrganizationType | null> {
-  const row = await client.fetch<any | null>(orgTypeBySlugQuery, { slug });
+  const row = await client.fetch<OrgTypeRow | null>(orgTypeBySlugQuery, { slug });
   if (!row) return null;
 
   return {
@@ -47,8 +63,8 @@ export async function fetchOrganizationTypeBySlug(slug: string): Promise<Organiz
     slug: row.slug,
     title: row.title,
     short: row.short ?? '',
-    body: row.body ?? '',
-    images: (row.images ?? []).filter(Boolean),
+    body: toTextBody(row.body),
+    images: toImages(row.images),
   };
 }
 
@@ -57,7 +73,7 @@ export async function fetchOrganizationHeroSlides(): Promise<HeroSlide[]> {
   const slides = row?.heroSlides ?? [];
 
   return slides
-    .filter((s) => !!s.imageUrl)
+    .filter((s) => Boolean(s.imageUrl))
     .map((s, idx) => ({
       id: String(idx),
       title: s.title ?? undefined,
@@ -66,14 +82,14 @@ export async function fetchOrganizationHeroSlides(): Promise<HeroSlide[]> {
 }
 
 export async function fetchOrganizationTypes(): Promise<OrganizationType[]> {
-  const rows = await client.fetch<any[]>(orgTypesQuery);
+  const rows = await client.fetch<OrgTypeRow[]>(orgTypesQuery);
 
   return rows.map((r) => ({
     id: r._id,
     slug: r.slug,
     title: r.title,
     short: r.short ?? '',
-    body: r.body ?? '',
-    images: (r.images ?? []).filter(Boolean),
+    body: toTextBody(r.body),
+    images: toImages(r.images),
   }));
 }

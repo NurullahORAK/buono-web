@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { config } from '@/lib/config';
+import CookiePreferencesLink from '@/components/common/CookiePreferencesLink';
 
 function SocialLink({
   href,
@@ -15,7 +16,7 @@ function SocialLink({
       href={href}
       aria-label={label}
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
       className="grid h-10 w-10 place-items-center rounded-full border border-black/10 hover:border-black/20 hover:bg-black/[0.03] transition text-[color:var(--ink)]"
     >
       {children}
@@ -44,7 +45,7 @@ export default function SiteFooter() {
           </div>
 
           {/* Orta: link kolonları */}
-          <div className="md:col-span-6 grid grid-cols-2 gap-10">
+          <div className="md:col-span-6 grid grid-cols-2 md:grid-cols-3 gap-10">
             <div>
               <div className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[color:var(--ink)]">
                 Müşteri İlişkileri
@@ -100,6 +101,43 @@ export default function SiteFooter() {
                 </li>
               </ul>
             </div>
+
+            <div>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[color:var(--ink)]">
+                Yasal
+              </div>
+              <ul className="mt-4 space-y-3 text-sm text-[color:var(--ink-soft)]">
+                <li>
+                  <Link
+                    href="/kvkk-aydinlatma-metni"
+                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
+                  >
+                    KVKK Aydınlatma Metni
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/cerez-politikasi"
+                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
+                  >
+                    Çerez Politikası
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/kullanim-kosullari"
+                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
+                  >
+                    Kullanım Koşulları
+                  </Link>
+                </li>
+                <li>
+                  <CookiePreferencesLink className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition">
+                    Çerez Tercihleri
+                  </CookiePreferencesLink>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Sağ: sosyal ikonlar */}
@@ -115,24 +153,31 @@ export default function SiteFooter() {
                 <YouTubeIcon />
               </SocialLink>
             </div>
-
-            <div className="mt-4 text-xs text-[color:var(--ink-soft)]/80">
-              Sosyal medya linkleri netleşince güncellenecek.
-            </div>
           </div>
         </div>
       </div>
 
       {/* ALT BAR (FULL WIDTH) */}
       <div className="bg-[color:var(--footer)]">
-        <div className="mx-auto max-w-6xl px-4 py-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between text-xs text-[color:var(--footer-ink)]/85">
-          <div>
-            © {new Date().getFullYear()} {config.brandName}
+        <div
+          className="
+      mx-auto max-w-6xl px-4
+      py-3 md:py-4
+      min-h-[44px]
+      flex flex-wrap items-center justify-between gap-3
+      text-xs text-[color:var(--footer-ink)]/85
+      leading-5
+    "
+          style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
+        >
+          {/* sol taraf */}
+          <div>© {new Date().getFullYear()} BUONO by Aslıhan Bakery</div>
+          {/* sağ taraf (senin kırmızı şeritteki linklerin buraya) */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a href="/fikri-sinai-mulkiyet" className="hover:opacity-70 transition">
+              TÜM HAKLARI SAKLIDIR.
+            </a>
           </div>
-
-          <Link href="/fikri-sinai-mulkiyet" className="hover:opacity-70 transition">
-            TÜM HAKLARI SAKLIDIR.
-          </Link>
         </div>
       </div>
     </footer>

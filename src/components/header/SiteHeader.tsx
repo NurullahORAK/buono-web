@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { config } from '@/lib/config';
 import { features } from '@/lib/features';
 import { useStickyState } from '@/hooks/useStickyState';
@@ -103,7 +103,7 @@ export default function SiteHeader() {
               'w-full bg-[color:var(--background)] relative transition-shadow duration-300 border-none',
               !stuck ? 'vakko-double-line-strong' : '',
             ].join(' ')}
-            style={{ ['--line' as any]: GOLD }}
+            style={{ '--line': GOLD } as CSSProperties}
           >
             <div className="mx-auto max-w-6xl px-4">
               <div className="flex items-center gap-3 py-3">

@@ -74,7 +74,7 @@ export default async function PastaGroupPage({ params }: { params: Promise<{ slu
                     <a
                       href={wa}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="mt-4 inline-flex items-center justify-center w-full bg-black text-white px-5 py-2.5 text-xs uppercase tracking-[0.18em] hover:opacity-90 transition"
                     >
                       SİPARİŞ VER

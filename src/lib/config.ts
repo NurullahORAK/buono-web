@@ -15,7 +15,7 @@ export const config = {
   // Sipariş hattı (istersen burada WhatsApp no ile aynı kalsın)
   orderLine: {
     phoneDisplay: '+90 540 035 34 12',
-    hours: 'Haftanın her günü / 10:00 - 22:00',
+    hours: 'Haftanın her günü / 08:00 - 24:00',
   },
 
   contactEmail: '',

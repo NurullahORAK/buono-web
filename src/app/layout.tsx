@@ -1,4 +1,5 @@
 import './globals.css';
+import type { CSSProperties } from 'react';
 import SiteHeader from '@/components/header/SiteHeader';
 import SiteFooter from '@/components/footer/SiteFooter';
 import OrderLineBar from '@/components/common/OrderLineBar';
@@ -16,12 +17,12 @@ const serif = Cormorant_Garamond({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const style = {
+    '--gold': config.theme?.gold ?? '#8A7B4A',
+  } as CSSProperties;
+
   return (
-    <html
-      lang="tr"
-      className={`${sans.variable} ${serif.variable}`}
-      style={{ ['--gold' as any]: config.theme?.gold ?? '#8A7B4A' }}
-    >
+    <html lang="tr" className={`${sans.variable} ${serif.variable}`} style={style}>
       <body>
         <SiteHeader />
         <main className={features.orderLineBar ? 'pb-8' : undefined}>{children}</main>

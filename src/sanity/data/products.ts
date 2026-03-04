@@ -70,8 +70,14 @@ function mapRowToProduct(row: SanityProductRow): Product {
   };
 }
 
+type SanitySearchProductRow = SanityProductRow & {
+  image?: string | null;
+  images?: (string | null)[];
+};
+
 export async function fetchAllSearchProducts() {
-  const rows = await client.fetch<any[]>(searchProductsQuery);
+  const rows = await client.fetch<SanitySearchProductRow[]>(searchProductsQuery);
+
   return rows.map((p) => ({
     id: p._id,
     name: p.name,
@@ -80,7 +86,7 @@ export async function fetchAllSearchProducts() {
     details: p.details ?? '',
     tags: p.tags ?? [],
     image: p.image ?? undefined,
-    images: (p.images ?? []).filter(Boolean),
+    images: (p.images ?? []).filter((x): x is string => Boolean(x)),
     categorySlug: p.categorySlug ?? '',
     categoryLabel: p.categoryLabel ?? undefined,
   }));

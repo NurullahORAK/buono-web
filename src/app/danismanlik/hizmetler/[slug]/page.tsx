@@ -73,7 +73,7 @@ export default async function ConsultingServiceDetail({
             <a
               href={wa}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex items-center justify-center bg-black text-white px-6 py-3 text-xs uppercase tracking-[0.16em] hover:opacity-90 transition"
             >
               Bilgi Al

@@ -14,7 +14,8 @@ function resolveImg(product: Product): string | null {
 
 export default function CakeProductCard({ product }: { product: Product }) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-  const message = `Merhaba, ${product.name} için sipariş vermek istiyorum. (Pasta)`;
+  const productUrl = `${siteUrl}/pasta/${product.slug}`;
+  const message = `Merhaba, ${product.name} için sipariş vermek istiyorum. Link: ${productUrl}`;
   const wa = buildWhatsAppUrl(config.whatsappPhoneE164, message);
 
   const img = resolveImg(product);
@@ -46,7 +47,7 @@ export default function CakeProductCard({ product }: { product: Product }) {
       <a
         href={wa}
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
         className="mt-4 inline-flex w-full items-center justify-center bg-black text-white px-5 py-3 text-xs uppercase tracking-[0.16em] hover:opacity-90 transition"
       >
         SİPARİŞ VER

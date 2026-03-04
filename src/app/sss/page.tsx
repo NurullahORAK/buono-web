@@ -15,8 +15,7 @@ export default async function FAQPage() {
 
   const items = (data.items ?? []).map((x) => {
     const isCta =
-      x.isWhatsappCta === true ||
-      x.question.trim().toLowerCase() === 'farklı bir konuda sorum var';
+      x.isWhatsappCta === true || x.question.trim().toLowerCase() === 'farklı bir konuda sorum var';
 
     return {
       q: x.question,
@@ -26,7 +25,7 @@ export default async function FAQPage() {
           <a
             href={wa}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center bg-black text-white px-6 py-3 text-xs uppercase tracking-[0.16em] hover:opacity-90 transition"
           >
             WhatsApp&apos;tan Yaz

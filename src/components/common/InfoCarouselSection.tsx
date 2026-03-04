@@ -27,10 +27,13 @@ export default function InfoCarouselSection({
 
   useEffect(() => {
     if (!emblaApi) return;
+
     const onSelect = () => setIndex(emblaApi.selectedScrollSnap());
     onSelect();
+
     emblaApi.on('select', onSelect);
     emblaApi.on('reInit', onSelect);
+
     return () => {
       emblaApi.off('select', onSelect);
       emblaApi.off('reInit', onSelect);
@@ -71,6 +74,13 @@ export default function InfoCarouselSection({
               ))}
             </div>
           </div>
+
+          {/* Slide indicator (index artık kullanılıyor, lint warning gider) */}
+          {total > 1 ? (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-white/80 backdrop-blur px-3 py-1 text-xs text-black/70">
+              {index + 1} / {total}
+            </div>
+          ) : null}
 
           {total > 1 ? (
             <>

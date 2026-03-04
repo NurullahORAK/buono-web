@@ -22,17 +22,14 @@ const consultingPageQuery = groq`
 }
 `;
 
-export async function fetchConsultingHeroSlides(): Promise<HeroSlide[]> {
-  const row = await client.fetch<ConsultingPageRow | null>(consultingPageQuery);
-  const slides = row?.heroSlides ?? [];
-  return slides
-    .filter((s) => !!s.imageUrl)
-    .map((s, idx) => ({
-      id: `c${idx}`,
-      title: s.title ?? undefined,
-      image: s.imageUrl ?? undefined,
-    }));
-}
+type ConsultingServiceRow = {
+  _id: string;
+  title: string;
+  slug: string;
+  short?: string | null;
+  body?: unknown;
+  images?: Array<string | null>;
+};
 
 const servicesQuery = groq`
 *[_type=="consultingService" && active==true]
@@ -49,32 +46,13 @@ const serviceBySlugQuery = groq`
 }
 `;
 
-export async function fetchConsultingServices(): Promise<ConsultingService[]> {
-  const rows = await client.fetch<any[]>(servicesQuery);
-  return rows.map((r) => ({
-    id: r._id,
-    slug: r.slug,
-    title: r.title,
-    short: r.short ?? '',
-    body: r.body ?? '',
-    images: (r.images ?? []).filter(Boolean),
-  }));
-}
-
-export async function fetchConsultingServiceBySlug(
-  slug: string
-): Promise<ConsultingService | null> {
-  const r = await client.fetch<any | null>(serviceBySlugQuery, { slug });
-  if (!r) return null;
-  return {
-    id: r._id,
-    slug: r.slug,
-    title: r.title,
-    short: r.short ?? '',
-    body: r.body ?? '',
-    images: (r.images ?? []).filter(Boolean),
-  };
-}
+type ReferenceRow = {
+  _id: string;
+  title: string;
+  slug: string;
+  body?: unknown;
+  images?: Array<string | null>;
+};
 
 const referencesQuery = groq`
 *[_type=="referenceItem" && active==true]
@@ -91,26 +69,75 @@ const referenceBySlugQuery = groq`
 }
 `;
 
-export async function fetchReferences(): Promise<ReferenceItem[]> {
-  const rows = await client.fetch<any[]>(referencesQuery);
+function toTextBody(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+
+function toImages(v: Array<string | null> | undefined): string[] {
+  return (v ?? []).filter((x): x is string => Boolean(x));
+}
+
+export async function fetchConsultingHeroSlides(): Promise<HeroSlide[]> {
+  const row = await client.fetch<ConsultingPageRow | null>(consultingPageQuery);
+  const slides = row?.heroSlides ?? [];
+  return slides
+    .filter((s) => Boolean(s.imageUrl))
+    .map((s, idx) => ({
+      id: `c${idx}`,
+      title: s.title ?? undefined,
+      image: s.imageUrl ?? undefined,
+    }));
+}
+
+export async function fetchConsultingServices(): Promise<ConsultingService[]> {
+  const rows = await client.fetch<ConsultingServiceRow[]>(servicesQuery);
   return rows.map((r) => ({
     id: r._id,
     slug: r.slug,
     title: r.title,
-    body: r.body ?? '',
-    images: (r.images ?? []).filter(Boolean),
+    short: r.short ?? '',
+    body: toTextBody(r.body),
+    images: toImages(r.images),
   }));
 }
 
-export async function fetchReferenceBySlug(slug: string): Promise<ReferenceItem | null> {
-  const r = await client.fetch<any | null>(referenceBySlugQuery, { slug });
+export async function fetchConsultingServiceBySlug(
+  slug: string
+): Promise<ConsultingService | null> {
+  const r = await client.fetch<ConsultingServiceRow | null>(serviceBySlugQuery, { slug });
   if (!r) return null;
+
   return {
     id: r._id,
     slug: r.slug,
     title: r.title,
-    body: r.body ?? '',
-    images: (r.images ?? []).filter(Boolean),
+    short: r.short ?? '',
+    body: toTextBody(r.body),
+    images: toImages(r.images),
+  };
+}
+
+export async function fetchReferences(): Promise<ReferenceItem[]> {
+  const rows = await client.fetch<ReferenceRow[]>(referencesQuery);
+  return rows.map((r) => ({
+    id: r._id,
+    slug: r.slug,
+    title: r.title,
+    body: toTextBody(r.body),
+    images: toImages(r.images),
+  }));
+}
+
+export async function fetchReferenceBySlug(slug: string): Promise<ReferenceItem | null> {
+  const r = await client.fetch<ReferenceRow | null>(referenceBySlugQuery, { slug });
+  if (!r) return null;
+
+  return {
+    id: r._id,
+    slug: r.slug,
+    title: r.title,
+    body: toTextBody(r.body),
+    images: toImages(r.images),
   };
 }
 
@@ -125,17 +152,17 @@ export async function fetchConsultingPage(): Promise<{
   slides: HeroSlide[];
   entryCards: ConsultingEntryCardData[];
 }> {
-  const row = await client.fetch<any | null>(consultingPageQuery);
+  const row = await client.fetch<ConsultingPageRow | null>(consultingPageQuery);
 
   const slides: HeroSlide[] = (row?.heroSlides ?? [])
-    .filter((s: any) => !!s.imageUrl)
-    .map((s: any, idx: number) => ({
+    .filter((s) => Boolean(s.imageUrl))
+    .map((s, idx) => ({
       id: `c${idx}`,
       title: s.title ?? undefined,
       image: s.imageUrl ?? undefined,
     }));
 
-  const entryCards: ConsultingEntryCardData[] = (row?.entryCards ?? []).map((c: any) => ({
+  const entryCards: ConsultingEntryCardData[] = (row?.entryCards ?? []).map((c) => ({
     title: c.title,
     desc: c.desc,
     href: c.href,

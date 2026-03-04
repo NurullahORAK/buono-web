@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { fetchContactPage } from '@/sanity/data/contact';
+import ConsentGatedIframe from '@/components/common/ConsentGatedIframe';
 
 export const revalidate = 60;
 
@@ -16,13 +17,11 @@ export default async function IletisimPage() {
 
       <div className="mt-6 grid gap-10 md:grid-cols-2">
         <div className="rounded-2xl overflow-hidden border border-black/10 bg-black/5">
-          <iframe
+          <ConsentGatedIframe
             src={data.mapEmbedUrl}
-            width="100%"
-            height="420"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="h-full w-full"
+            title="Google Haritalar"
+            height={420}
+            requiredCategory="functional"
           />
         </div>
 
@@ -51,7 +50,7 @@ export default async function IletisimPage() {
                     <a
                       href={waHref}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="hover:underline underline-offset-4"
                     >
                       {x.text}
@@ -79,7 +78,7 @@ function Row({ label, value, href }: { label: string; value: string; href?: stri
             href={href}
             className="hover:underline underline-offset-4"
             target={href.startsWith('http') ? '_blank' : undefined}
-            rel={href.startsWith('http') ? 'noreferrer' : undefined}
+            rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
           >
             {value}
           </a>

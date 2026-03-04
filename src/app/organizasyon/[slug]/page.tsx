@@ -54,7 +54,7 @@ export default async function OrganizationDetailPage({
             <a
               href={wa}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white hover:opacity-90 transition"
             >
               Bilgi Al
