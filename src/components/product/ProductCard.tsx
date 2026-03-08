@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Product } from '@/content/types';
+import { sanityImageLoader } from '@/lib/sanityImageLoader';
 
 type Props = {
   product: Product;
@@ -36,6 +37,7 @@ export default function ProductCard({ product, href, showShort = true, className
       <div className="relative h-40 rounded-xl overflow-hidden bg-black/5">
         {cover ? (
           <Image
+            loader={sanityImageLoader}
             src={cover}
             alt={product.name}
             fill

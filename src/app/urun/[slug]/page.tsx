@@ -20,7 +20,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const catHref = categoryHref(product.categorySlug);
   const categoryLabel = product.categoryLabel ?? product.categorySlug;
 
-  const siteUrl = 'http://localhost:3000';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
   const message = isGiftBox
     ? `Merhaba, ${product.name} hediye paketini kişiselleştirmek istiyorum. İçerik/renk/not detaylarını paylaşabilir misiniz? Link: ${siteUrl}/urun/${product.slug}`

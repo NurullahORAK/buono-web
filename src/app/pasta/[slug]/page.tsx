@@ -12,7 +12,7 @@ export default async function PastaGroupPage({ params }: { params: Promise<{ slu
   const group = await fetchCakeGroupBySlug(slug);
   if (!group) return notFound();
 
-  const siteUrl = 'http://localhost:3000';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
   return (
     <div>

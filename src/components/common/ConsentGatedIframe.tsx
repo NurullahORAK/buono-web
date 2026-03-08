@@ -1,10 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { CookieConsentState, CookieConsentCategory } from '@/lib/cookieConsent';
-import { isAllowed, readConsent, openCookiePreferences } from '@/lib/cookieConsent';
+import type { CookieConsentCategory, CookieConsentState } from '@/lib/cookieConsent';
+import { isAllowed, openCookiePreferences, readConsent } from '@/lib/cookieConsent';
 
-type ConsentChangedEvent = CustomEvent<CookieConsentState>;
+function getDetailFromEvent<T>(e: Event): T | null {
+  const ce = e as CustomEvent<T>;
+  return ce?.detail ?? null;
+}
 
 export default function ConsentGatedIframe({
   src,
@@ -17,20 +20,27 @@ export default function ConsentGatedIframe({
   height?: number;
   requiredCategory?: CookieConsentCategory;
 }) {
-  const [consent, setConsent] = useState<CookieConsentState | null>(() => readConsent());
+  // ✅ SSR/ilk render sabit: her zaman null başla
+  const [consent, setConsent] = useState<CookieConsentState | null>(null);
 
   useEffect(() => {
-    const onChanged = (event: Event) => {
-      const ce = event as ConsentChangedEvent;
-      setConsent(ce.detail ?? null);
+    // ❗ mounted state kullanmıyoruz.
+    // İlk client render placeholder olur, effect sonrası consent okunur → iframe açılır.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setConsent(readConsent());
+
+    const onChanged = (e: Event) => {
+      const detail = getDetailFromEvent<CookieConsentState>(e);
+      setConsent(detail);
     };
+
     const onCleared = () => setConsent(null);
 
-    window.addEventListener('cookie-consent-changed', onChanged as EventListener);
+    window.addEventListener('cookie-consent-changed', onChanged);
     window.addEventListener('cookie-consent-cleared', onCleared);
 
     return () => {
-      window.removeEventListener('cookie-consent-changed', onChanged as EventListener);
+      window.removeEventListener('cookie-consent-changed', onChanged);
       window.removeEventListener('cookie-consent-cleared', onCleared);
     };
   }, []);
@@ -45,7 +55,8 @@ export default function ConsentGatedIframe({
             İçerik Gizlendi
           </div>
           <div className="mt-2 text-sm text-black/70 leading-relaxed">
-            Bu içerik (ör. Google Haritalar) <b>işlevsel çerezler</b> olmadan görüntülenemez.
+            Bu içerik (örn. Google Haritalar) <b>işlevsel çerezler</b> olmadan görüntülenemez.
+            Dilerseniz çerez tercihlerinizi güncelleyebilirsiniz.
           </div>
 
           <div className="mt-4 flex items-center justify-center gap-2">
@@ -56,6 +67,7 @@ export default function ConsentGatedIframe({
             >
               Tercihleri Aç
             </button>
+
             <a
               href="/cerez-politikasi"
               className="h-10 px-4 rounded-xl border border-black/15 text-xs uppercase tracking-[0.16em] grid place-items-center hover:bg-black/[0.03] transition"

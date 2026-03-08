@@ -17,12 +17,25 @@ export function proxy(req: NextRequest) {
   if (pathname.startsWith('/studio')) {
     const user = process.env.STUDIO_BASIC_AUTH_USER;
     const pass = process.env.STUDIO_BASIC_AUTH_PASS;
+    const isProd = process.env.NODE_ENV === 'production';
 
+    // ✅ PROD’da env yoksa studio’yu tamamen kapat (en güvenlisi)
+    if (isProd && (!user || !pass)) {
+      return new NextResponse('Not Found', {
+        status: 404,
+        headers: { 'Cache-Control': 'no-store' },
+      });
+    }
+
+    // Dev ortamda env yoksa kolaylık olsun diye izin ver
     if (user && pass) {
       if (!basicAuthOk(req, user, pass)) {
         return new NextResponse('Auth required', {
           status: 401,
-          headers: { 'WWW-Authenticate': 'Basic realm="Studio"' },
+          headers: {
+            'WWW-Authenticate': 'Basic realm="Studio"',
+            'Cache-Control': 'no-store',
+          },
         });
       }
     }

@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react';
 import type { CookieConsentState } from '@/lib/cookieConsent';
 import { DEFAULT_CONSENT, readConsent, writeConsent } from '@/lib/cookieConsent';
 
-type ConsentChangedEvent = CustomEvent<CookieConsentState>;
-
-type Draft = Pick<CookieConsentState, 'functional' | 'analytics' | 'marketing'>;
+type ToggleKey = 'functional' | 'analytics' | 'marketing';
 
 function ToggleRow({
   label,
@@ -51,49 +49,78 @@ function ToggleRow({
 }
 
 export default function CookieConsentBanner() {
-  const [consent, setConsent] = useState<CookieConsentState | null>(() => readConsent());
+  const [, setConsent] = useState<CookieConsentState | null>(null);
+  const [showBanner, setShowBanner] = useState(false);
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<Draft>(() => ({
-    functional: consent?.functional ?? false,
-    analytics: consent?.analytics ?? false,
-    marketing: consent?.marketing ?? false,
-  }));
 
-  // banner: consent yoksa ve modal açık değilse görünür
-  const showBanner = consent === null && !open;
+  const [draft, setDraft] = useState<Pick<CookieConsentState, ToggleKey>>({
+    functional: false,
+    analytics: false,
+    marketing: false,
+  });
 
   useEffect(() => {
-    const onChanged = (event: Event) => {
-      const ce = event as ConsentChangedEvent;
-      setConsent(ce.detail ?? null);
-      setOpen(false);
+    const existing = readConsent();
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setConsent(existing);
+
+    setShowBanner(!existing);
+
+    const onChanged = (e: Event) => {
+      const next = ((e as CustomEvent<CookieConsentState | null>)?.detail ??
+        null) as CookieConsentState | null;
+      setConsent(next);
+      setShowBanner(false);
     };
 
     const onOpenPrefs = () => {
-      const current = readConsent() ?? DEFAULT_CONSENT;
+      const current = readConsent();
+      const normalized = current ?? DEFAULT_CONSENT;
+
       setDraft({
-        functional: current.functional,
-        analytics: current.analytics,
-        marketing: current.marketing,
+        functional: normalized.functional,
+        analytics: normalized.analytics,
+        marketing: normalized.marketing,
       });
+
       setOpen(true);
+      setShowBanner(false);
     };
 
-    window.addEventListener('cookie-consent-changed', onChanged as EventListener);
+    window.addEventListener('cookie-consent-changed', onChanged);
     window.addEventListener('open-cookie-preferences', onOpenPrefs);
 
     return () => {
-      window.removeEventListener('cookie-consent-changed', onChanged as EventListener);
+      window.removeEventListener('cookie-consent-changed', onChanged);
       window.removeEventListener('open-cookie-preferences', onOpenPrefs);
     };
-  }, []);
+  }, []); // ✅ sabit deps: hata biter
 
   const acceptAll = () => {
-    writeConsent({ ...DEFAULT_CONSENT, functional: true, analytics: true, marketing: true });
+    // ✅ UI (slider) anında güncellensin
+    setDraft({ functional: true, analytics: true, marketing: true });
+
+    // ✅ mevcut işlev aynı kalsın (kaydet + event)
+    writeConsent({
+      ...DEFAULT_CONSENT,
+      functional: true,
+      analytics: true,
+      marketing: true,
+    });
   };
 
   const rejectAll = () => {
-    writeConsent({ ...DEFAULT_CONSENT, functional: false, analytics: false, marketing: false });
+    // ✅ UI (slider) anında güncellensin
+    setDraft({ functional: false, analytics: false, marketing: false });
+
+    // ✅ mevcut işlev aynı kalsın (kaydet + event)
+    writeConsent({
+      ...DEFAULT_CONSENT,
+      functional: false,
+      analytics: false,
+      marketing: false,
+    });
   };
 
   const savePrefs = () => {
@@ -104,16 +131,6 @@ export default function CookieConsentBanner() {
       marketing: draft.marketing,
     });
     setOpen(false);
-  };
-
-  const openPrefsFromBanner = () => {
-    const current = readConsent() ?? DEFAULT_CONSENT;
-    setDraft({
-      functional: current.functional,
-      analytics: current.analytics,
-      marketing: current.marketing,
-    });
-    setOpen(true);
   };
 
   if (!showBanner && !open) return null;
@@ -127,27 +144,38 @@ export default function CookieConsentBanner() {
               <div className="text-[11px] uppercase tracking-[0.16em] text-black/50">
                 Çerez Tercihleri
               </div>
+
               <div className="mt-2 text-sm text-black/70 leading-relaxed">
-                Sitemiz temel işlevler için <b>zorunlu</b>, harita gibi özellikler için{' '}
-                <b>işlevsel</b> çerezler kullanabilir. Analitik/pazarlama çerezleri tercihinizle
-                etkinleşir. Detaylar:{' '}
+                Sitemiz; temel işlevler için <b>zorunlu</b>, harita gibi bazı özellikler için{' '}
+                <b>işlevsel</b> çerezler kullanabilir. Analitik ve pazarlama çerezleri yalnızca
+                tercihinizle etkinleşir. Detaylar için{' '}
                 <a
                   href="/cerez-politikasi"
                   className="underline underline-offset-4 hover:opacity-80"
                 >
                   Çerez Politikası
                 </a>
-                .
+                ’nı inceleyebilirsiniz.
               </div>
 
               <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
                 <button
                   type="button"
-                  onClick={openPrefsFromBanner}
+                  onClick={() => {
+                    const current = readConsent() ?? DEFAULT_CONSENT;
+                    setDraft({
+                      functional: current.functional,
+                      analytics: current.analytics,
+                      marketing: current.marketing,
+                    });
+                    setOpen(true);
+                    setShowBanner(false);
+                  }}
                   className="h-10 px-4 rounded-xl border border-black/15 text-xs uppercase tracking-[0.16em] hover:bg-black/[0.03] transition"
                 >
                   Tercihler
                 </button>
+
                 <button
                   type="button"
                   onClick={rejectAll}
@@ -155,6 +183,7 @@ export default function CookieConsentBanner() {
                 >
                   Reddet
                 </button>
+
                 <button
                   type="button"
                   onClick={acceptAll}
@@ -182,7 +211,7 @@ export default function CookieConsentBanner() {
                   <h2 className="vakko-title text-2xl md:text-3xl">ÇEREZ TERCİHLERİ</h2>
                   <p className="mt-2 text-sm text-black/70 leading-relaxed">
                     Zorunlu çerezler sitenin çalışması için gereklidir ve kapatılamaz. Diğer
-                    kategorileri isteğe göre açıp kapatabilirsin.
+                    kategorileri isteğinize göre açıp kapatabilirsiniz.
                   </p>
                 </div>
                 <button
@@ -198,7 +227,7 @@ export default function CookieConsentBanner() {
               <div className="mt-6">
                 <ToggleRow
                   label="Zorunlu Çerezler"
-                  desc="Sitenin güvenli şekilde çalışması ve tercihlerin hatırlanması için gereklidir."
+                  desc="Sitenin güvenli şekilde çalışması, tercihlerin hatırlanması gibi temel işlevler için gereklidir."
                   checked={true}
                   onChange={() => {}}
                   disabled
@@ -211,13 +240,13 @@ export default function CookieConsentBanner() {
                 />
                 <ToggleRow
                   label="Analitik Çerezler"
-                  desc="Kullanımı ölçerek iyileştirme yapmaya yardımcı olur (tercihinle)."
+                  desc="Ziyaretçi sayısı ve sayfa performansını ölçerek iyileştirme yapmamıza yardımcı olur (tercihinizle etkinleşir)."
                   checked={draft.analytics}
                   onChange={(v) => setDraft((d) => ({ ...d, analytics: v }))}
                 />
                 <ToggleRow
                   label="Pazarlama Çerezleri"
-                  desc="Reklam/yeniden pazarlama amaçlı kullanılabilir (tercihinle)."
+                  desc="Reklam/yeniden pazarlama gibi amaçlarla kullanılabilir (tercihinizle etkinleşir)."
                   checked={draft.marketing}
                   onChange={(v) => setDraft((d) => ({ ...d, marketing: v }))}
                 />
@@ -248,8 +277,15 @@ export default function CookieConsentBanner() {
               </div>
 
               <div className="mt-4 text-xs text-black/60 leading-relaxed">
-                Tercihler tarayıcıda saklanır. Dilediğin zaman footer’daki “Çerez Tercihleri” ile
-                güncelleyebilirsin.
+                Tercihleriniz tarayıcınızda saklanır. Dilerseniz ayrıca tarayıcı ayarlarınızdan
+                çerezleri silebilir veya engelleyebilirsiniz. Detaylı bilgi:{' '}
+                <a
+                  href="/cerez-politikasi"
+                  className="underline underline-offset-4 hover:opacity-80"
+                >
+                  Çerez Politikası
+                </a>
+                .
               </div>
             </div>
           </div>
