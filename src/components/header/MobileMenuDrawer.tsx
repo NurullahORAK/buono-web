@@ -52,7 +52,7 @@ export default function MobileMenuDrawer({
            bg-white/40 hover:bg-white/70
            hover:border-black/25 transition"
             >
-              Üretim Merkezi
+              Buono Üretim Merkezi
             </Link>
 
             <Link
