@@ -70,20 +70,21 @@ export default async function IletisimPage() {
 
 function Row({ label, value, href }: { label: string; value: string; href?: string | null }) {
   return (
-    <div className="grid grid-cols-[160px_1fr] gap-6 border-b border-black/10 py-4">
+    <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-1 sm:gap-6 border-b border-black/10 py-4">
       <div className="text-black/50 text-sm">{label}</div>
-      <div className="text-black/80 text-sm whitespace-pre-line break-words">
+
+      <div className="text-black/80 text-sm whitespace-pre-line break-words [overflow-wrap:anywhere] min-w-0">
         {href ? (
           <a
             href={href}
-            className="hover:underline underline-offset-4"
+            className="hover:underline underline-offset-4 break-words [overflow-wrap:anywhere] inline-block"
             target={href.startsWith('http') ? '_blank' : undefined}
             rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
           >
             {value}
           </a>
         ) : (
-          value
+          <span className="break-words [overflow-wrap:anywhere]">{value}</span>
         )}
       </div>
     </div>

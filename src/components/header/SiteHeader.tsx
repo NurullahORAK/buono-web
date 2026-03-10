@@ -28,6 +28,41 @@ export default function SiteHeader() {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [navH, setNavH] = useState(0);
 
+  const navScrollRef = useRef<HTMLElement | null>(null);
+  const [fadeLeft, setFadeLeft] = useState(false);
+  const [fadeRight, setFadeRight] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
+
+  useEffect(() => {
+    const el = navScrollRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      const scrollable = max > 2;
+
+      setIsScrollable(scrollable);
+      setFadeLeft(el.scrollLeft > 2);
+      setFadeRight(scrollable && el.scrollLeft < max - 2);
+
+      // ✅ Eğer scrollable olduysa ve içerik ortalanıp kırpılıyorsa, 0'a çek
+      if (scrollable && el.scrollLeft < 1) {
+        el.scrollLeft = 0;
+      }
+    };
+
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+
+    return () => {
+      el.removeEventListener('scroll', update);
+      ro.disconnect();
+    };
+  }, []);
+
   useLayoutEffect(() => {
     const el = navRef.current;
     if (!el) return;
@@ -106,46 +141,66 @@ export default function SiteHeader() {
             style={{ '--line': GOLD } as CSSProperties}
           >
             <div className="mx-auto max-w-6xl px-4">
-              <div className="flex items-center gap-3 py-3">
+              <div className="flex items-center gap-3 py-3 min-w-0">
                 {/* Kategoriler */}
-                <nav className="hidden md:flex flex-1 items-center justify-center gap-10 text-[14px] lg:text-[15px] vakko-nav leading-none">
-                  {config.categories.map((c) => {
-                    const href = categoryHref(c.slug);
-                    const active = pathname.startsWith(href);
+                <div className="relative hidden md:flex flex-1 min-w-0">
+                  <nav
+                    ref={navScrollRef}
+                    className={[
+                      'flex flex-1 min-w-0 items-center',
+                      isScrollable ? 'justify-start' : 'justify-center',
+                      'gap-6 lg:gap-8 text-[13px] lg:text-[15px] vakko-nav leading-none',
+                      'overflow-x-auto whitespace-nowrap no-scrollbar',
+                    ].join(' ')}
+                  >
+                    {config.categories.map((c) => {
+                      const href = categoryHref(c.slug);
+                      const active = pathname.startsWith(href);
 
-                    return (
-                      <Link
-                        key={c.slug}
-                        href={href}
-                        className={[
-                          'relative inline-block px-1 py-1 transition',
-                          'text-[color:var(--ink)]',
-                          c.slug === 'hediye-paketleri' ? 'text-center min-w-[110px]' : '',
-                          'after:absolute after:left-0 after:-bottom-2 after:h-[1px] after:w-full',
-                          'after:bg-[color:var(--gold)] after:origin-left after:scale-x-0 after:transition-transform after:duration-300',
-                          'hover:after:scale-x-100',
-                          active ? 'after:scale-x-100' : '',
-                        ].join(' ')}
-                      >
-                        {c.slug === 'hediye-paketleri' ? (
-                          <span className="block text-center leading-[1.1]">
-                            <span className="block">Hediye</span>
-                            <span className="block">Paketleri</span>
-                          </span>
-                        ) : (
-                          c.label
-                        )}
-                      </Link>
-                    );
-                  })}
-                </nav>
+                      return (
+                        <Link
+                          key={c.slug}
+                          href={href}
+                          className={[
+                            'relative inline-block px-1 py-1 transition shrink-0',
+                            'text-[color:var(--ink)]',
+                            c.slug === 'hediye-paketleri'
+                              ? 'text-center min-w-[128px] lg:min-w-[140px] shrink-0'
+                              : '',
+                            'after:absolute after:left-0 after:-bottom-2 after:h-[1px] after:w-full',
+                            'after:bg-[color:var(--gold)] after:origin-left after:scale-x-0 after:transition-transform after:duration-300',
+                            'hover:after:scale-x-100',
+                            active ? 'after:scale-x-100' : '',
+                          ].join(' ')}
+                        >
+                          {c.slug === 'hediye-paketleri' ? (
+                            <span className="block text-center leading-[1.1]">
+                              <span className="block">Hediye</span>
+                              <span className="block">Paketleri</span>
+                            </span>
+                          ) : (
+                            c.label
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+
+                  {/* Fade overlays (premium) */}
+                  {fadeLeft ? (
+                    <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-[color:var(--background)] to-transparent" />
+                  ) : null}
+                  {fadeRight ? (
+                    <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[color:var(--background)] to-transparent" />
+                  ) : null}
+                </div>
 
                 {/* Sağ ikonlar */}
-                <div className="ml-auto flex items-center gap-1">
+                <div className="ml-auto flex shrink-0 items-center gap-1">
                   <button
                     type="button"
                     onClick={() => setMenuOpen(true)}
-                    className="md:hidden h-9 w-9 rounded-full transition grid place-items-center hover:bg-black/5"
+                    className="xl:hidden h-9 w-9 rounded-full transition grid place-items-center hover:bg-black/5"
                     aria-label="Menüyü aç"
                     style={{ color: GOLD }}
                   >

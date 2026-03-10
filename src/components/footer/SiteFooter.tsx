@@ -28,6 +28,8 @@ export default function SiteFooter() {
   const instagram = config.social.instagram || 'https://www.instagram.com/';
   const tiktok = config.social.tiktok || 'https://www.tiktok.com/';
   const youtube = config.social.youtube || 'https://www.youtube.com/';
+  const footerLinkClass =
+    'text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition inline-block text-left';
 
   return (
     <footer className="mt-16 bg-[color:var(--background)]">
@@ -52,18 +54,12 @@ export default function SiteFooter() {
               </div>
               <ul className="mt-4 space-y-3 text-sm text-[color:var(--ink-soft)]">
                 <li>
-                  <Link
-                    href="/iletisim"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/iletisim" className={footerLinkClass}>
                     İletişim
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/sss"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/sss" className={footerLinkClass}>
                     Sık Sorulan Sorular
                   </Link>
                 </li>
@@ -76,26 +72,17 @@ export default function SiteFooter() {
               </div>
               <ul className="mt-4 space-y-3 text-sm text-[color:var(--ink-soft)]">
                 <li>
-                  <Link
-                    href="/kalite-ve-gida-guvenligi"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/kalite-ve-gida-guvenligi" className={footerLinkClass}>
                     Kalite ve Gıda Güvenliği
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/uretim-merkezi"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/uretim-merkezi" className={footerLinkClass}>
                     Buono Üretim Merkezi
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/fikri-sinai-mulkiyet"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/fikri-sinai-mulkiyet" className={footerLinkClass}>
                     Fikri Sınai Mülkiyet
                   </Link>
                 </li>
@@ -108,31 +95,22 @@ export default function SiteFooter() {
               </div>
               <ul className="mt-4 space-y-3 text-sm text-[color:var(--ink-soft)]">
                 <li>
-                  <Link
-                    href="/kvkk-aydinlatma-metni"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/kvkk-aydinlatma-metni" className={footerLinkClass}>
                     KVKK Aydınlatma Metni
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/cerez-politikasi"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/cerez-politikasi" className={footerLinkClass}>
                     Çerez Politikası
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/kullanim-kosullari"
-                    className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition"
-                  >
+                  <Link href="/kullanim-kosullari" className={footerLinkClass}>
                     Kullanım Koşulları
                   </Link>
                 </li>
                 <li>
-                  <CookiePreferencesLink className="text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] hover:underline transition">
+                  <CookiePreferencesLink className={footerLinkClass}>
                     Çerez Tercihleri
                   </CookiePreferencesLink>
                 </li>

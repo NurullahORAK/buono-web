@@ -191,6 +191,15 @@ body {
   opacity: 1;
 }
 
+/* Yatay scroll var ama scrollbar görünmesin */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 html,
 body {
   overflow-x: hidden;
