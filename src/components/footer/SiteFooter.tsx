@@ -152,6 +152,17 @@ export default function SiteFooter() {
           <div>© {new Date().getFullYear()} BUONO by Aslıhan Bakery</div>
           {/* sağ taraf (senin kırmızı şeritteki linklerin buraya) */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a
+              href="https://www.linkedin.com/in/nurullah-orak-630563251/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:opacity-70 transition"
+            >
+              Designed &amp; Developed by Nurullah ORAK
+            </a>
+
+            <span className="opacity-40">|</span>
+
             <a href="/fikri-sinai-mulkiyet" className="hover:opacity-70 transition">
               TÜM HAKLARI SAKLIDIR.
             </a>
