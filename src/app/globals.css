@@ -16,6 +16,7 @@
   --brand-gold: 150 126 74;
   --brand-gold-dark: 120 98 56;
   --brand-ink: 89 1 6; /* 590106 */
+  --brand: #590106;
 }
 
 @media (prefers-color-scheme: dark) {

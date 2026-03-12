@@ -8,6 +8,7 @@ import { features } from '@/lib/features';
 import BackToTopButton from '@/components/common/BackToTopButton';
 import { Cormorant_Garamond, Inter } from 'next/font/google';
 import CookieConsentBanner from '@/components/common/CookieConsentBanner';
+import CookieConsentPopup from '@/components/common/CookieConsentPopup';
 
 const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const serif = Cormorant_Garamond({
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {features.orderLineBar ? <OrderLineBar /> : null}
         <SiteFooter />
         <BackToTopButton />
-        <CookieConsentBanner />
+        <CookieConsentPopup />
       </body>
     </html>
   );
